@@ -1,3 +1,5 @@
 PUT    /import/word/:sourceLang/:word/:targetLang/:translation    controllers.Importer.importWord(sourceLang: play.api.i18n.Lang, word, targetLang: play.api.i18n.Lang, translation)
 GET    /quiz/:sourceLang    controllers.Quizzer.quiz(sourceLang: play.api.i18n.Lang,  targetLang: play.api.i18n.Lang)
-POST    /quiz/:sourceLang/check/:word    controllers.Quizzer.check(sourceLang: play.api.i18n.Lang, word,  targetLang: play.api.i18n.Lang, translation)
+POST   /quiz/:sourceLang/check/:word    controllers.Quizzer.check(sourceLang: play.api.i18n.Lang, word,  targetLang: play.api.i18n.Lang, translation)
+# Overloaded methods not allowed
+GET    /quizh/:sourceLang    controllers.Quizzer.quizh(sourceLang: play.api.i18n.Lang)

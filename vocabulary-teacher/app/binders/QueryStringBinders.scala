@@ -14,5 +14,4 @@ object QueryStringBinders {
 
     override def unbind(key: String, value: Lang) = value.code
   }
-
 }

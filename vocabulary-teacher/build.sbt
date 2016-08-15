@@ -10,3 +10,5 @@ routesGenerator := InjectedRoutesGenerator
 
 routesImport += "binders.PathBinders._"
 routesImport += "binders.QueryStringBinders._"
+
+libraryDependencies += filters
