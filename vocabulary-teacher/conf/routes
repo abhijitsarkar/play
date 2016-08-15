@@ -3,3 +3,4 @@ GET    /quiz/:sourceLang    controllers.Quizzer.quiz(sourceLang: play.api.i18n.L
 POST   /quiz/:sourceLang/check/:word    controllers.Quizzer.check(sourceLang: play.api.i18n.Lang, word,  targetLang: play.api.i18n.Lang, translation)
 # Overloaded methods not allowed
 GET    /quizh/:sourceLang    controllers.Quizzer.quizh(sourceLang: play.api.i18n.Lang)
+POST   /test/raw    controllers.Tester.handleRaw()
