@@ -1,0 +1,3 @@
+GET        /                controllers.IgController.redirect
+GET        /callback        controllers.IgController.callback(code: String)
+
