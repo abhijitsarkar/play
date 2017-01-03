@@ -11,16 +11,16 @@ import scala.concurrent.Future
   */
 @ImplementedBy(classOf[IgServiceInterpreter])
 trait IgService {
-  def authorizationUrl: String
+  def authorizationUrl(callbackUrl: String): String
 
-  def accessTokenParams(code: String): Future[Map[String, Seq[String]]]
+  protected def accessTokenParams(code: String, callbackUrl: String): Future[Map[String, Seq[String]]]
 
-  def accessToken(params: Map[String, Seq[String]]): Future[AccessToken]
+  protected def accessToken(params: Map[String, Seq[String]]): Future[AccessToken]
 
-  def top(token: AccessToken): Future[Media]
+  protected def top(token: AccessToken): Future[Media]
 
-  def callback(code: String) = for {
-    params <- accessTokenParams(code)
+  def callback(code: String, callbackUrl: String) = for {
+    params <- accessTokenParams(code, callbackUrl)
     token <- accessToken(params)
     media <- top(token)
   } yield media

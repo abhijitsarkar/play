@@ -1,6 +1,6 @@
 package services
 
-import java.net.{InetAddress, URLEncoder}
+import java.net.{URLEncoder}
 import java.nio.charset.StandardCharsets.UTF_8
 import javax.inject.Inject
 
@@ -18,12 +18,6 @@ class IgServiceInterpreter @Inject()(configuration: Configuration, ws: WSClient)
   extends IgService {
   private val logger = LoggerFactory.getLogger(classOf[IgServiceInterpreter])
 
-  val port = configuration.getInt("port")
-    .getOrElse(8080)
-  val host = configuration.getString("host")
-    .filter(!_.isEmpty)
-    .getOrElse(s"http://${InetAddress.getLocalHost.getHostAddress}:${port}")
-  logger.debug(s"Resolved host to: ${host}.")
   val clientId = configuration.getString("clientId").get
   val clientSecret = configuration.getString("clientSecret").get
 
@@ -31,27 +25,25 @@ class IgServiceInterpreter @Inject()(configuration: Configuration, ws: WSClient)
   val authorizeUrl = ig.getString("authorizeUrl").get
   val recentPostsUrl = ig.getString("recentPostsUrl").get
 
-  val redirectUri = s"${host}/callback"
-
-  override def authorizationUrl = {
+  override def authorizationUrl(callbackUrl: String) = {
     val utf8Encode = (s: String) => URLEncoder.encode(s, UTF_8.name)
     val qs = (for {
       (k, v) <- Map(
         "client_id" -> clientId,
-        "redirect_uri" -> redirectUri,
+        "redirect_uri" -> callbackUrl,
         "response_type" -> "code"
       )
     } yield s"${utf8Encode(k)}=${utf8Encode(v)}").mkString("&")
     s"$authorizeUrl?$qs"
   }
 
-  override def accessTokenParams(code: String) =
+  override def accessTokenParams(code: String, callbackUrl: String) =
     Future {
       Map(
         "client_id" -> Seq(clientId),
         "client_secret" -> Seq(clientSecret),
         "grant_type" -> Seq("authorization_code"),
-        "redirect_uri" -> Seq(redirectUri),
+        "redirect_uri" -> Seq(callbackUrl),
         "code" -> Seq(code)
       )
     }
@@ -83,7 +75,7 @@ class IgServiceInterpreter @Inject()(configuration: Configuration, ws: WSClient)
       )
   }
 
-  def top(token: AccessToken) = {
+  override def top(token: AccessToken) = {
     ws.url(s"${
       recentPostsUrl
     }?access_token=${
